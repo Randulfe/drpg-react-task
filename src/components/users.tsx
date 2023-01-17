@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Modal, TablePagination } from '@mui/material';
+import { Box, Button, Modal, TablePagination } from '@mui/material';
 import { useGetUsers } from '../controllers/api-queries';
 import UsersTable from './table/users-table';
 import EditUserModal from './modal/edit-user-modal';
-import { UserData } from './types';
+import { UserData, UsersData } from './types';
+import { ToastContainer } from 'react-toastify';
 
 function Users() {
   const [page, setPage] = useState<number>(1);
@@ -13,6 +14,28 @@ function Users() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { data, isError, isLoading } = useGetUsers(page);
+
+  const userLoadingField: UserData = {
+    id: 0,
+    firstName: 'loading...',
+    lastName: 'loading...',
+    email: 'loading...',
+    avatar: 'https://unsplash-assets.imgix.net/empty-states/photos.png',
+  };
+  const arrayLoadingFields: Array<UserData | undefined> = [, , , , ,];
+  const loadingFields = {
+    data: arrayLoadingFields.fill(userLoadingField, 0, 5),
+    page: 0,
+    total: 0,
+  };
+
+  console.log(data, arrayLoadingFields.fill(userLoadingField, 0, 5));
+  const usersData =
+    data && !(Object.keys(data).length === 0)
+      ? (data as UsersData)
+      : isLoading
+      ? loadingFields
+      : undefined;
 
   function openModal(data: UserData): void {
     setEditUser(data);
@@ -42,7 +65,11 @@ function Users() {
       accessor: 'avatar',
       Cell: (tableProps: any) => (
         <div>
-          <img src={tableProps.row.original.avatar} />
+          <img
+            src={tableProps.row.original.avatar}
+            style={{ objectFit: 'fill', width: '100%', maxWidth: '150px' }}
+            alt={`Profile picture for ${tableProps.row.original.firstName}`}
+          />
         </div>
       ),
       Filter: '',
@@ -76,29 +103,36 @@ function Users() {
       Filter: '',
     },
   ];
-  
+
   return (
     <div>
-      {isLoading ? (
-        <div>LOADING...</div>
-      ) : data && !isError ? (
-        <div>
+      {usersData && !isError ? (
+        <Box
+          sx={{
+            justifyContent: 'center',
+            display: 'flex',
+            marginY: '50px',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
           <UsersTable
             columns={columns}
-            data={data.data}
+            data={usersData.data}
             rowsPerPage={rowsPerPage}
           />
 
           <TablePagination
             component="div"
-            count={data.total}
-            page={data.page}
+            count={usersData.total}
+            page={usersData.page}
+            width={100}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             rowsPerPageOptions={[2, 3, 5, 10]}
           />
-        </div>
+        </Box>
       ) : (
         <div>ERROR LOADING API DATA</div>
       )}
@@ -112,6 +146,7 @@ function Users() {
       >
         <EditUserModal handleClose={handleClose} userData={editUser} />
       </Modal>
+      <ToastContainer />
     </div>
   );
 }

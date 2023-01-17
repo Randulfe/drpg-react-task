@@ -1,3 +1,4 @@
+import { TableCell, tableCellClasses } from '@mui/material';
 import styled from 'styled-components';
 
 export const StyledTable = styled.table`
@@ -34,3 +35,16 @@ export const StyledTr = styled.tr`
     }
   }
 `;
+
+export const StyledTableCell = styled(TableCell)(() => ({
+  [`&.${tableCellClasses.head}`]: {
+    fontVariant: 'h2',
+    border: '1px solid rgb(224, 224, 224)',
+    fontWeight: 'bold',
+    fontSize: '16px',
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 16,
+    border: '1px solid rgb(224, 224, 224)',
+  },
+}));

@@ -3,7 +3,7 @@ import { UserData, UsersData } from '../components/types';
 import { getUsers, updateUser } from '../frameworks/http-client';
 import { UserResponse } from '../frameworks/types';
 
-export async function getUsersData(page: number): Promise<UsersData | Error>  {
+export async function getUsersData(page: number) {
   try {
     const { data } = await getUsers(page);
     return {
@@ -21,7 +21,7 @@ export async function getUsersData(page: number): Promise<UsersData | Error>  {
       ),
     };
   } catch (e) {
-    return new Error('getUsersData');
+    throw new Error('getUsersData');
   }
 }
 
@@ -37,11 +37,10 @@ export async function updateUserData(payload: UserData) {
     const { data } = await updateUser(user);
     return data;
   } catch (e) {
-    return new Error('userUpdate');
+    throw new Error('userUpdate');
   }
 }
 
 export function useGetUsers(page: number) {
-  console.log(getUsersData(page));
   return useQuery(['users', page], async () => await getUsersData(page));
 }
