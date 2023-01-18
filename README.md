@@ -2,7 +2,7 @@
 
 This project covers the technical task provided as part of the interview process. 
 
-Due to my current time constraints of [having multiple interview processes, current job, table tennis league 🏓, etc] I did not have enough time to do as much as I would normally do. In this ```README.md``` you can find some info of how I would have done things differently if I wasn't so busy this week. 
+Due to my current time constraints of (having multiple interview processes, current job, table tennis league 🏓, etc) I did not have enough time to do as much as I would normally do. In this ```README.md``` you can find some info of how I would have done things differently if I wasn't so busy this week. 
 
 Please let me know if you have any issues accessing the project or any questions regarding it. 
 
