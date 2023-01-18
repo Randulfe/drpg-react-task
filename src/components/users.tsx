@@ -1,63 +1,47 @@
-import React, { useState } from 'react';
-import { Box, Button, Modal, TablePagination } from '@mui/material';
-import { useGetUsers } from '../controllers/api-queries';
-import UsersTable from './table/users-table';
-import EditUserModal from './modal/edit-user-modal';
-import { UserData, UsersData } from './types';
-import { ToastContainer } from 'react-toastify';
+import React, { useState } from 'react'
+import { ToastContainer } from 'react-toastify'
+import { Box, Button, Modal, TablePagination } from '@mui/material'
+import { useGetUsers } from '../controllers/api-queries'
+import UsersTable from './table/users-table'
+import EditUserModal from './modal/edit-user-modal'
+import { UserData, UsersData } from './types'
+import { loadingFields } from './constants'
 
-function Users() {
-  const [page, setPage] = useState<number>(1);
-  const [editUser, setEditUser] = useState<UserData>();
-  const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-  const [open, setOpen] = useState<boolean>(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const { data, isError, isLoading } = useGetUsers(page);
+function Users () {
+  const [page, setPage] = useState<number>(0)
+  const [pageRequest, setPageRequest] = useState<number>(1)
+  const [editUser, setEditUser] = useState<UserData>()
+  const [open, setOpen] = useState<boolean>(false)
+  const [rowsPerPage, setRowsPerPage] = useState<number>(6)
+  const handleOpen = () => { setOpen(true) }
+  const handleClose = () => { setOpen(false) }
+  const { data, isError, isLoading } = useGetUsers(pageRequest)
 
-  const userLoadingField: UserData = {
-    id: 0,
-    firstName: 'loading...',
-    lastName: 'loading...',
-    email: 'loading...',
-    avatar: 'https://unsplash-assets.imgix.net/empty-states/photos.png',
-  };
-  const arrayLoadingFields: Array<UserData | undefined> = [, , , , ,];
-  const loadingFields = {
-    data: arrayLoadingFields.fill(userLoadingField, 0, 5),
-    page: 0,
-    total: 0,
-  };
-
-  console.log(data, arrayLoadingFields.fill(userLoadingField, 0, 5));
   const usersData =
-    data && !(Object.keys(data).length === 0)
+    (data != null) && !(Object.keys(data).length === 0)
       ? (data as UsersData)
       : isLoading
-      ? loadingFields
-      : undefined;
+        ? loadingFields
+        : undefined
 
-  function openModal(data: UserData): void {
-    setEditUser(data);
-    handleOpen();
+  function openModal (data: UserData): void {
+    setEditUser(data)
+    handleOpen()
   }
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
   ) => {
-    // set request for page2
-    setPage(newPage);
-  };
+    setPage(newPage)
+    setPageRequest(Math.floor((newPage * rowsPerPage) / 6) + 1)
+  }
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 5));
-
-    // refetch to page
-    // setPage(0);
-  };
+    setRowsPerPage(parseInt(event.target.value))
+  }
 
   const columns = [
     {
@@ -68,24 +52,25 @@ function Users() {
           <img
             src={tableProps.row.original.avatar}
             style={{ objectFit: 'fill', width: '100%', maxWidth: '150px' }}
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             alt={`Profile picture for ${tableProps.row.original.firstName}`}
           />
         </div>
       ),
-      Filter: '',
+      Filter: ''
     },
     {
       Header: 'First Name',
       accessor: 'firstName',
-      Filter: '',
+      Filter: ''
     },
     {
       Header: 'Last Name',
-      accessor: 'lastName',
+      accessor: 'lastName'
     },
     {
       Header: 'Email',
-      accessor: 'email',
+      accessor: 'email'
     },
     {
       Header: 'Action',
@@ -94,48 +79,52 @@ function Users() {
         <Button
           variant="contained"
           onClick={() => {
-            openModal(tableProps.row.original);
+            openModal(tableProps.row.original)
           }}
         >
           Edit Details
         </Button>
       ),
-      Filter: '',
-    },
-  ];
+      Filter: ''
+    }
+  ]
 
   return (
     <div>
-      {usersData && !isError ? (
+      {(usersData != null) && !isError
+        ? (
         <Box
           sx={{
             justifyContent: 'center',
             display: 'flex',
             marginY: '50px',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           <UsersTable
             columns={columns}
-            data={usersData.data}
-            rowsPerPage={rowsPerPage}
+            data={usersData.data.slice(
+              page * rowsPerPage - 6 * (pageRequest - 1),
+              page * rowsPerPage + rowsPerPage - 6 * (pageRequest - 1)
+            )}
           />
 
           <TablePagination
             component="div"
             count={usersData.total}
-            page={usersData.page}
+            page={page}
             width={100}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[2, 3, 5, 10]}
+            rowsPerPageOptions={[2, 3, 6]}
           />
         </Box>
-      ) : (
-        <div>ERROR LOADING API DATA</div>
-      )}
+          )
+        : (
+        <div>WE ARE HAVING ISSUES GETTING OUR USERS 😞</div>
+          )}
 
       <Modal
         open={open}
@@ -148,7 +137,7 @@ function Users() {
       </Modal>
       <ToastContainer />
     </div>
-  );
+  )
 }
 
-export default Users;
+export default Users

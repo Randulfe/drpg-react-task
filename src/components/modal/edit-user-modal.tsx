@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
-import { Box, Button, FormControl, TextField, Typography } from '@mui/material';
-import { updateUserData } from '../../controllers/api-queries';
-import { ModalContainer, UserDetailsContainer } from './styles';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { Box, Button, FormControl, TextField, Typography } from '@mui/material'
+import { updateUserData } from '../../controllers/api-queries'
+import { UserData } from '../types'
+import { ModalContainer, UserDetailsContainer } from './styles'
+import { regexEmail, regexImageUrl } from '../constants'
 
-function EditUserModal({ handleClose, userData }: any) {
-  const [data, setData] = useState(userData);
+function EditUserModal ({ handleClose, userData }: any) {
+  const [data, setData] = useState<UserData>(userData)
 
-  function handleChange(event: any) {
-    const { name, value } = event.target;
+  function handleChange (event: any) {
+    const { name, value } = event.target
 
     setData({
       ...data,
-      [name]: value,
-    });
+      [name]: value
+    })
   }
 
-  async function handleSave() {
+  async function handleSave () {
     try {
-      await updateUserData(data);
+      await updateUserData(data)
       toast('User updated correctly', {
         position: 'bottom-center',
         autoClose: 2000,
@@ -29,8 +31,8 @@ function EditUserModal({ handleClose, userData }: any) {
         draggable: true,
         progress: undefined,
         theme: 'light',
-        type: 'success',
-      });
+        type: 'success'
+      })
     } catch (e) {
       toast('There was an issue updating the user. Please try later', {
         position: 'bottom-center',
@@ -41,34 +43,22 @@ function EditUserModal({ handleClose, userData }: any) {
         draggable: true,
         progress: undefined,
         theme: 'light',
-        type: 'error',
-      });
+        type: 'error'
+      })
     }
   }
 
   // would have used YUP library if I had some more time
-  function onInvalidEmail() {
-    return !data.email
+  function onInvalidEmail (): boolean {
+    return (data.email.length === 0)
       ? true
-      : String(data.email)
-          .toLowerCase()
-          .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-          )
-      ? false
-      : true;
+      : String(data.email).toLowerCase().match(regexEmail) == null
   }
 
-  function onInvalidImageUrl() {
-    return !data.avatar
+  function onInvalidImageUrl (): boolean {
+    return (data.avatar.length === 0)
       ? true
-      : String(data.avatar)
-          .toLowerCase()
-          .match(
-            '^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*.(gif|jpe?g|png|webp)$',
-          )
-      ? false
-      : true;
+      : String(data.avatar).toLowerCase().match(regexImageUrl) == null
   }
 
   return (
@@ -89,8 +79,8 @@ function EditUserModal({ handleClose, userData }: any) {
             label="First Name"
             name="firstName"
             type="text"
-            error={!data.firstName}
-            helperText={!data.firstName && 'First Name is required'}
+            error={data.firstName.length === 0}
+            helperText={(data.firstName.length === 0) && 'First Name is required'}
             defaultValue={data.firstName}
             onChange={handleChange}
           />
@@ -100,8 +90,8 @@ function EditUserModal({ handleClose, userData }: any) {
             label="Last Name"
             name="lastName"
             type="text"
-            error={!data.lastName}
-            helperText={!data.lastName && 'First Name is required'}
+            error={data.lastName.length === 0}
+            helperText={(data.lastName.length === 0) && 'First Name is required'}
             defaultValue={data.lastName}
             sx={{ marginLeft: '10px' }}
             onChange={handleChange}
@@ -123,7 +113,7 @@ function EditUserModal({ handleClose, userData }: any) {
           sx={{
             display: 'flex',
             flexDirection: 'row',
-            paddingBottom: '30px',
+            paddingBottom: '30px'
           }}
         >
           <TextField
@@ -154,13 +144,13 @@ function EditUserModal({ handleClose, userData }: any) {
             sx={{ marginLeft: '10px' }}
             disabled={
               onInvalidEmail() ||
-              !data.firstName ||
-              !data.lastName ||
+              (data.firstName.length === 0) ||
+              (data.lastName.length === 0) ||
               onInvalidImageUrl()
             }
             onClick={() => {
-              handleSave();
-              handleClose();
+              void handleSave()
+              handleClose()
             }}
           >
             SAVE
@@ -168,7 +158,7 @@ function EditUserModal({ handleClose, userData }: any) {
         </Box>
       </FormControl>
     </Box>
-  );
+  )
 }
 
-export default EditUserModal;
+export default EditUserModal

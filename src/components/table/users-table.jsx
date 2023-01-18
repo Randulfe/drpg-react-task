@@ -1,85 +1,68 @@
-import React from 'react';
-import { useFilters, useTable } from 'react-table';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { StyledTableCell } from './styles';
-import { Box, TextField, Typography } from '@mui/material';
-import usePagination from '@mui/material/usePagination/usePagination';
+import React from 'react'
+import { useFilters, useTable } from 'react-table'
+import {
+  Box,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material'
+import { StyledTableCell } from './styles'
 
 // FILTER UI
-function DefaultColumnFilter({
+function DefaultColumnFilter ({
   // eslint-disable-next-line react/prop-types
-  column: { filterValue, preFilteredRows, setFilter },
+  column: { filterValue, preFilteredRows, setFilter }
 }) {
   // eslint-disable-next-line react/prop-types
-  const count = preFilteredRows.length;
+  const count = preFilteredRows.length
 
   return (
     <TextField
       value={filterValue || ''}
       type="search"
       onChange={(e) => {
-        setFilter(e.target.value || undefined);
+        setFilter(e.target.value || undefined)
       }}
       placeholder={`Search ${count} users...`}
       sx={{ marginTop: '10px' }}
     />
-  );
+  )
 }
 
 // eslint-disable-next-line react/prop-types
-function UsersTable({ columns, data, rowsPerPage }) {
+function UsersTable ({ columns, data }) {
   const filterTypes = () => ({
     text: (rows, id, filterValue) => {
       return rows.filter((row) => {
-        const rowValue = row.values[id];
+        const rowValue = row.values[id]
         return rowValue !== undefined
           ? String(rowValue)
-              .toLowerCase()
-              .startsWith(String(filterValue).toLowerCase())
-          : true;
-      });
-    },
-  });
+            .toLowerCase()
+            .startsWith(String(filterValue).toLowerCase())
+          : true
+      })
+    }
+  })
 
   const defaultColumn = React.useMemo(
     () => ({
-      Filter: DefaultColumnFilter,
+      Filter: DefaultColumnFilter
     }),
-    [],
-  );
+    []
+  )
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-  } = useTable(
-    {
-      columns,
-      data,
-      defaultColumn,
-      initialState: { pageIndex: 0 },
-      filterTypes,
-    },
-    useFilters,
-    usePagination,
-  );
-
-  setPageSize(2);
+  const { getTableProps, getTableBodyProps, rows, headerGroups, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+        defaultColumn,
+        filterTypes
+      },
+      useFilters
+    )
 
   return (
     <Box sx={{ textAlign: 'center' }}>
@@ -105,8 +88,8 @@ function UsersTable({ columns, data, rowsPerPage }) {
           ))}
         </TableHead>
         <TableBody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
+          {rows.map((row, i) => {
+            prepareRow(row)
             return (
               <TableRow
                 sx={{ verticalAlign: 'center' }}
@@ -122,15 +105,15 @@ function UsersTable({ columns, data, rowsPerPage }) {
                     >
                       {cell.render('Cell')}
                     </StyledTableCell>
-                  );
+                  )
                 })}
               </TableRow>
-            );
+            )
           })}
         </TableBody>
       </Table>
     </Box>
-  );
+  )
 }
 
-export default UsersTable;
+export default UsersTable

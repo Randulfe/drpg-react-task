@@ -1,10 +1,23 @@
-import { TableCell, tableCellClasses } from '@mui/material';
-import styled from 'styled-components';
+import { TableCell, tableCellClasses } from '@mui/material'
+import styled from 'styled-components'
 
 export const StyledTable = styled.table`
   border-spacing: 0;
   border: 1px solid black;
-`;
+`
+
+export const StyledTableCell = styled(TableCell)(() => ({
+  [`&.${tableCellClasses.head}`]: {
+    fontVariant: 'h2',
+    border: '1px solid rgb(224, 224, 224)',
+    fontWeight: 'bold',
+    fontSize: '16px'
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 16,
+    border: '1px solid rgb(224, 224, 224)'
+  }
+}))
 
 export const StyledTd = styled.td`
   margin: 0;
@@ -15,7 +28,7 @@ export const StyledTd = styled.td`
   :last-child {
     border-right: 0;
   }
-`;
+`
 
 export const StyledTh = styled.th`
   margin: 0;
@@ -26,7 +39,7 @@ export const StyledTh = styled.th`
   :last-child {
     border-right: 0;
   }
-`;
+`
 
 export const StyledTr = styled.tr`
   :last-child {
@@ -34,17 +47,4 @@ export const StyledTr = styled.tr`
       border-bottom: 0;
     }
   }
-`;
-
-export const StyledTableCell = styled(TableCell)(() => ({
-  [`&.${tableCellClasses.head}`]: {
-    fontVariant: 'h2',
-    border: '1px solid rgb(224, 224, 224)',
-    fontWeight: 'bold',
-    fontSize: '16px',
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 16,
-    border: '1px solid rgb(224, 224, 224)',
-  },
-}));
+`

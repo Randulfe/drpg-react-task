@@ -1,13 +1,13 @@
-export type UsersData = {
-  page: number;
-  total: number;
-  data: Array<UserData>;
-};
+export interface UsersData {
+  page: number
+  total: number
+  data: UserData[]
+}
 
-export type UserData = {
-  id: number;
-  avatar: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-};
+export interface UserData {
+  id: number
+  avatar: string
+  firstName: string
+  lastName: string
+  email: string
+}
